@@ -4,39 +4,36 @@ const express = require('express')
 
 const configuration = new Configuration({
     organization: "org-lkAuakCMwFaLoHEQtdWeU0GZ",
-    apiKey: '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',
+    apiKey: process.env.OPEN_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
-
-
-async function callApi() {
-  const response = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: "Say this is a test",
-    max_tokens: 7,
-    temperature: 0,
-  });
-  console.log(response.data.choices[0].text)
-}
-
-
-// create a simple express api that calls the function above
+// add cors and body parser to express  
+const cors = require('cors')
+const bodyParser = require('body-parser')
 
 
 const app = express()
+app.use(cors())
+app.use(bodyParser.json())
+
+
+
+
 const port = 3080
 
 app.post('/',  async (req, res) => {
+  const {message} = req.body
+  console.log(message, 'message')
     const response = await openai.createCompletion({
       model: "text-davinci-003",
-      prompt: "Say this is a test",
-      max_tokens: 7,
-      temperature: 0,
+      prompt: `${message}`,
+      max_tokens: 1000,
+      temperature: 0.5,
     });
-    console.log(response.data.choices[0].text)
+    console.log()
     res.json({
-      data: response.data
+      message: response.data.choices[0].text
     })
   })
 
