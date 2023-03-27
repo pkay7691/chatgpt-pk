@@ -1,16 +1,20 @@
-// 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
+
+require('dotenv').config()
 const  { Configuration, OpenAIApi } = require ("openai");
 const express = require('express')
 
+
+
 const configuration = new Configuration({
     organization: "org-lkAuakCMwFaLoHEQtdWeU0GZ",
-    apiKey: process.env.OPEN_API_KEY,
+    apiKey: process.env.OPENAI_AI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
 // add cors and body parser to express  
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const morgan = require('morgan')
 
 
 const app = express()
@@ -20,7 +24,7 @@ app.use(bodyParser.json())
 
 
 
-const port = 3080
+const port = 3000
 
 app.post('/',  async (req, res) => {
   const {message} = req.body
@@ -31,7 +35,6 @@ app.post('/',  async (req, res) => {
       max_tokens: 1000,
       temperature: 0.5,
     });
-    console.log()
     res.json({
       message: response.data.choices[0].text
     })
