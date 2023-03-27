@@ -1,4 +1,4 @@
-import logo from "./logo.svg";
+
 import "./App.css";
 import "./normal.css";
 import { useState } from "react";
@@ -10,25 +10,40 @@ function App() {
     user: "gpt",
     message: "How can I help you?",
   },
-  {
-    user: "me",
-    message: "I want to use ChatGpt!",
-  },
 ]);
+
+// clear chats
+function clearChat(){
+  setChatLog([])
+}
+
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setChatLog([...chatLog, { user: "me", message: `${input}` }]);
-    setInput("");
+    let chatLogNew = [...chatLog, { user: "me", message: `${input}` }];
+    await setInput("");
+    const messages = chatLogNew.map((message) => message.message).join("\n")
+    const response = await fetch("http://localhost:3080", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: messages
+
+      })
+    });
+    const data = await response.json();
+    setChatLog([...chatLogNew, { user: "gpt", message: data.message }]);
+
   }
 
   return (
     <div className="App">
       <aside className="sidemenu">
-        <h1>Aside</h1>
-        <div className="sidemenu-button">
-          <span>+</span>
-          New Chat
+        <h1>CHAT-PK</h1>
+        <div className="sidemenu-button" onClick={clearChat}>
+          Clear Chat
         </div>
       </aside>
       <section className="chatbox">
@@ -36,20 +51,12 @@ function App() {
           {chatLog.map((message, index) => (
             <ChatMessage key={index} message={message} />
           ))}
-          <div className="chat-message chatgpt">
-            <div className="chat-message-center">
-              <div className="avatar chatgpt">
-                
-              </div>
-              <div className="message">I am an AI</div>
-            </div>
-          </div>
         </div>
         <div className="chatbox-input-holder">
           <form onSubmit={handleSubmit}>
             <input
               className="chat-input"
-              placeholder="Pleas type here"
+              placeholder="Type Here"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               rows="1"
@@ -80,7 +87,6 @@ const ChatMessage = ({ message }) => {
                     fill="currentColor"
                   />
                 </svg>
-          {message.user === "gpt" ? "Me" : "GPT"}
         </div>
         <div className="message">{message.message}</div>
       </div>
