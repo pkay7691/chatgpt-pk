@@ -2,8 +2,11 @@ import "./App.css";
 import "./normal.css";
 import { useState } from "react";
 
+
 function App() {
   // add state for input and chat log
+
+
   const [input, setInput] = useState("");
   const [chatLog, setChatLog] = useState([
     {
@@ -22,7 +25,7 @@ function App() {
     let chatLogNew = [...chatLog, { user: "me", message: `${input}` }];
     await setInput("");
     const messages = chatLogNew.map((message) => message.message).join("\n");
-    const response = await fetch(`http://localhost:${process.env.PORT || 3080}`, {
+    const response = await fetch(`http://localhost:3080`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
