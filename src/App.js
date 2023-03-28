@@ -25,7 +25,7 @@ function App() {
     let chatLogNew = [...chatLog, { user: "me", message: `${input}` }];
     await setInput("");
     const messages = chatLogNew.map((message) => message.message).join("\n");
-    const response = await fetch(`http://localhost:3080`, {
+    const response = await fetch(`https://heavy-cemetery-production.up.railway.app`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
